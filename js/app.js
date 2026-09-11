@@ -72,10 +72,17 @@ class LostTreasureApp {
       });
     }
 
-    // Modal Close Buttons
+    // Modal Close Buttons & Backdrop click
     document.querySelectorAll('.modal-close-wax-seal').forEach(btn => {
       btn.addEventListener('click', () => {
         this.closeAllModals();
+      });
+    });
+    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          this.closeAllModals();
+        }
       });
     });
 

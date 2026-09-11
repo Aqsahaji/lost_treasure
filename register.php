@@ -76,11 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="auth-standalone-wrapper">
     <div class="auth-brand-header">
-      <div class="ship-crest-icon" style="margin: 0 auto 10px; width: 54px; height: 54px; font-size: 26px;">☠️</div>
-      <h1 style="font-family: var(--font-title); font-size: 36px; color: var(--gold-primary); letter-spacing: 2px;">LOST TREASURE</h1>
-      <span style="font-family: var(--font-heading); font-size: 13px; letter-spacing: 3px; color: #a8b2c1; text-transform: uppercase;">
-        The Isle of Serpents • Captain's Registry
-      </span>
+      <div class="ship-crest-icon">☠️</div>
+      <h1>LOST TREASURE</h1>
+      <span class="subtitle">The Isle of Serpents • Captain's Registry</span>
     </div>
 
     <div class="parchment-modal-box auth-standalone-card">
@@ -141,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="auth-page-footer-links">
         <p>Already signed the articles? <a href="login.php">Log in to the Captain's Helm</a></p>
         <div style="margin-top: 8px;">
-          <a href="login.php?guest=1" class="guest-link">Or sail as The Nameless Mariner (Guest Voyage)</a>
+          <a href="login.php?guest=1" class="guest-link-btn">⚓ Or sail as The Nameless Mariner (Guest Voyage)</a>
         </div>
       </div>
     </div>
