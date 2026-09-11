@@ -106,7 +106,7 @@ $is_guest = !empty($_SESSION['is_guest']);
   </header>
 
   <!-- Main Adventure Manuscript Stage -->
-  <main class="adventure-stage">
+  <main class="adventure-stage" style="perspective: 1400px; transform-style: preserve-3d;">
     <div class="manuscript-tome">
       <div class="bookmark-ribbon"></div>
 
