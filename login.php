@@ -62,19 +62,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚓</text></svg>">
 </head>
-<body class="auth-page-body">
+<body class="auth-page-body" style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:30px 16px; box-sizing:border-box; perspective:1200px;">
 
   <div class="sea-atmosphere-layer"></div>
   <div class="ambient-fog"></div>
 
-  <div class="auth-standalone-wrapper">
+  <div class="auth-standalone-wrapper" style="margin:auto; width:100%; max-width:520px; display:flex; flex-direction:column; align-items:center; justify-content:center; transform-style:preserve-3d;">
     <div class="auth-brand-header">
       <div class="ship-crest-icon">⚓</div>
       <h1>LOST TREASURE</h1>
       <span class="subtitle">The Isle of Serpents • Captain's Helm</span>
     </div>
 
-    <div class="parchment-modal-box auth-standalone-card">
+    <div class="parchment-modal-box auth-standalone-card card-3d-tilt" id="loginCard">
       <div class="modal-title-header">
         <h2>Return to the Helm</h2>
         <p>Enter your secret mark to unlock your saved voyage and chronicles</p>
@@ -109,12 +109,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <div class="auth-page-footer-links">
         <p>New to these treacherous waters? <a href="register.php">Sign the Ship's Articles (Register)</a></p>
-        <div style="margin-top: 8px;">
+        <div style="margin-top: 10px;">
           <a href="login.php?guest=1" class="guest-link-btn">⚓ Or sail as The Nameless Mariner (Guest Voyage)</a>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    // Interactive 3D Tilt Parallax Effect
+    const card = document.getElementById('loginCard');
+    if (card) {
+      document.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const cardCenterX = rect.left + rect.width / 2;
+        const cardCenterY = rect.top + rect.height / 2;
+        const mouseX = e.clientX - cardCenterX;
+        const mouseY = e.clientY - cardCenterY;
+        
+        // Calculate tilt angles (limit max angle to 10 deg)
+        const rotateX = -(mouseY / (window.innerHeight / 2)) * 8;
+        const rotateY = (mouseX / (window.innerWidth / 2)) * 8;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(10px)`;
+      });
+
+      document.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        card.style.transition = 'transform 0.5s ease';
+      });
+
+      card.addEventListener('mouseenter', () => {
+        card.style.transition = 'transform 0.1s ease-out';
+      });
+    }
+  </script>
 
 </body>
 </html>

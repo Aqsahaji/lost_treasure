@@ -123,6 +123,38 @@ class LostTreasureApp {
         alert(res.message);
       }
     });
+
+    // 3D Parallax Tilt for Manuscript Tome
+    this.bind3DTilt();
+  }
+
+  bind3DTilt() {
+    const tome = document.querySelector('.manuscript-tome');
+    if (!tome) return;
+
+    document.addEventListener('mousemove', (e) => {
+      if (window.innerWidth > 980 && !document.querySelector('.modal-backdrop.active')) {
+        const rect = tome.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const mouseX = e.clientX - centerX;
+        const mouseY = e.clientY - centerY;
+
+        const rotX = -(mouseY / (window.innerHeight / 2)) * 3.5;
+        const rotY = (mouseX / (window.innerWidth / 2)) * 3.5;
+
+        tome.style.transform = `perspective(1400px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(10px)`;
+      }
+    });
+
+    document.addEventListener('mouseleave', () => {
+      tome.style.transform = 'perspective(1400px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+      tome.style.transition = 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+    });
+
+    tome.addEventListener('mouseenter', () => {
+      tome.style.transition = 'transform 0.12s ease-out';
+    });
   }
 
   async initApp() {

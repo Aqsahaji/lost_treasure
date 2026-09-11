@@ -1745,6 +1745,7 @@ select.auth-parchment-input {
   .captain-stats-cluster {
     justify-content: space-around;
   }
+}
 /* ==========================================================================
    STANDALONE AUTHENTICATION PAGES (login.php & register.php)
    ========================================================================== */
