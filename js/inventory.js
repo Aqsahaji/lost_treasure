@@ -9,7 +9,9 @@ const ARTIFACT_CATALOG = {
     name: "Captain's Waterlogged Journal",
     icon: '📖',
     category: 'tome',
-    lore: "Salvaged from the drowned galleon El Cazador. Its pages are stiff with brine and locked with a Caesar shift cipher.",
+    rarity: 'common',
+    modelType: 'sun_medallion',
+    lore: "Salvaged from the drowned galleon El Cazador. Its pages are stiff with brine and locked with ancient cryptographic ciphers.",
     canCombine: false
   },
   brass_astrolabe: {
@@ -17,7 +19,9 @@ const ARTIFACT_CATALOG = {
     name: 'Brass Navigational Astrolabe',
     icon: '🧭',
     category: 'instrument',
-    lore: "A 16th-century astronomical dial. Its sight vanes are calibrated to track polar stars and unknown solar eclipses.",
+    rarity: 'rare',
+    modelType: 'brass_astrolabe',
+    lore: "A 16th-century astronomical dial. Its sight vanes are calibrated to track polar stars and secret Aztec planetary alignments.",
     canCombine: true
   },
   obsidian_lens: {
@@ -25,6 +29,8 @@ const ARTIFACT_CATALOG = {
     name: 'Smoky Obsidian Lens',
     icon: '🔮',
     category: 'relic',
+    rarity: 'rare',
+    modelType: 'sun_medallion',
     lore: "Crafted from dark volcanic glass by Aztec priests. When held against torchlight, it reveals hidden astrological alignments.",
     canCombine: true
   },
@@ -33,6 +39,8 @@ const ARTIFACT_CATALOG = {
     name: 'Serpent Bone Key',
     icon: '🗝️',
     category: 'key',
+    rarity: 'rare',
+    modelType: 'skeleton_key',
     lore: "Pried from the clenched fingers of a dead Spanish officer. Shaped like a coiled viper's vertebrae.",
     canCombine: true
   },
@@ -41,6 +49,8 @@ const ARTIFACT_CATALOG = {
     name: 'Jade Serpent Eye',
     icon: '🟢',
     category: 'gem',
+    rarity: 'rare',
+    modelType: 'skeleton_key',
     lore: "Carved from solid Guatemalan nephrite. Legend says it neutralizes the paralyzing venom of temple booby traps.",
     canCombine: true
   },
@@ -49,7 +59,49 @@ const ARTIFACT_CATALOG = {
     name: 'Gold Sun Medallion',
     icon: '🪙',
     category: 'treasure',
-    lore: "Heavy Aztec gold stamped with the face of Tonatiuh. Emits a faint warmth even in freezing sea caverns.",
+    rarity: 'legendary',
+    modelType: 'aztec_sun_medallion',
+    lore: "Heavy Aztec gold stamped with the solar face of Tonatiuh. Emits a faint warmth even in freezing sea caverns.",
+    canCombine: false
+  },
+  cursed_emerald_skull: {
+    id: 'cursed_emerald_skull',
+    name: 'Cursed Emerald Aztec Skull',
+    icon: '💀',
+    category: 'relic',
+    rarity: 'cursed',
+    modelType: 'cursed_emerald_skull',
+    lore: "Unearthed from the crypt altar. Glowing green witchfire burns inside the eye sockets, whispering forgotten Aztec hexes.",
+    canCombine: false
+  },
+  spanish_gold_doubloons: {
+    id: 'spanish_gold_doubloons',
+    name: 'Royal Spanish Doubloons',
+    icon: '💰',
+    category: 'treasure',
+    rarity: 'common',
+    modelType: 'aztec_sun_medallion',
+    lore: "Minted in Seville in 1714. Stamped with the cross of Burgundy, salvaged from the seabed of Dead Man's Reef.",
+    canCombine: false
+  },
+  ghost_lantern: {
+    id: 'ghost_lantern',
+    name: 'Phantom Ghost Lantern',
+    icon: '🏮',
+    category: 'relic',
+    rarity: 'rare',
+    modelType: 'sun_medallion',
+    lore: "Burns with a perpetual cold blue flame requiring no whale oil. Illuminates spirits that haunt the Isle of Serpents.",
+    canCombine: false
+  },
+  obsidian_dagger: {
+    id: 'obsidian_dagger',
+    name: 'Sacrificial Aztec Dagger',
+    icon: '🗡️',
+    category: 'weapon',
+    rarity: 'legendary',
+    modelType: 'skeleton_key',
+    lore: "Carved from raw volcanic obsidian glass, untouched by rust or decay after four centuries.",
     canCombine: false
   },
   celestial_monocle: {
@@ -57,6 +109,8 @@ const ARTIFACT_CATALOG = {
     name: "Stargazer's Celestial Monocle",
     icon: '👁️',
     category: 'master_artifact',
+    rarity: 'legendary',
+    modelType: 'brass_astrolabe',
     lore: "Forged by combining the Brass Astrolabe with the Obsidian Lens. Decodes invisible starlight glyphs on the Sun Door!",
     canCombine: false
   },
@@ -65,6 +119,8 @@ const ARTIFACT_CATALOG = {
     name: 'Venom-Warded Serpent Key',
     icon: '🐍',
     category: 'master_artifact',
+    rarity: 'legendary',
+    modelType: 'skeleton_key',
     lore: "Created by embedding the Jade Serpent Eye into the Bone Key. Disarms ancient pressure plates and dart mechanisms.",
     canCombine: false
   }
@@ -81,20 +137,31 @@ const COMBINATION_RECIPES = [
   {
     ingredients: ['skeleton_key', 'jade_serpent_eye'],
     result: 'venom_ward_key',
-    successMessage: "The jade serpent eye clicks into the iron key's socket. A calming emerald glow envelops the warding talisman.",
+    successMessage: "The jade serpent eye clicks into the bone key's socket. A calming emerald glow envelops the warding talisman.",
     badgeUnlock: 'alchemist_deep'
   }
 ];
 
 class InventorySystem {
   constructor() {
-    this.items = [];
+    this.totalSlots = 20;
+    this.items = ['waterlogged_journal', 'brass_astrolabe', 'spanish_gold_doubloons'];
     this.selectedForCombination = [];
+    this.crewStatus = {
+      captainHealth: 100,
+      crewMorale: 80,
+      shipSupplies: 65
+    };
   }
 
   reset() {
-    this.items = ['waterlogged_journal'];
+    this.items = ['waterlogged_journal', 'brass_astrolabe', 'spanish_gold_doubloons'];
     this.selectedForCombination = [];
+    this.crewStatus = {
+      captainHealth: 100,
+      crewMorale: 80,
+      shipSupplies: 65
+    };
   }
 
   loadState(savedItems) {

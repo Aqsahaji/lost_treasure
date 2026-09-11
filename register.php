@@ -68,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Sign the Ship's Articles | Lost Treasure</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☠️</text></svg>">
+  <!-- Three.js 3D WebGL Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/three_models.js"></script>
 </head>
 <body class="auth-page-body" style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:30px 16px; box-sizing:border-box; perspective:1200px;">
 
@@ -76,7 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="auth-standalone-wrapper" style="margin:auto; width:100%; max-width:520px; display:flex; flex-direction:column; align-items:center; justify-content:center; transform-style:preserve-3d;">
     <div class="auth-brand-header">
-      <div class="ship-crest-icon">☠️</div>
+      <!-- 3D Interactive WebGL Brass Astrolabe Model -->
+      <div id="auth3DModelCanvas" style="width: 140px; height: 140px; margin: 0 auto; cursor: grab;" title="Interactive 3D Brass Astrolabe (Drag to rotate)"></div>
       <h1>LOST TREASURE</h1>
       <span class="subtitle">The Isle of Serpents • Captain's Registry</span>
     </div>
@@ -146,6 +150,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
   <script>
+    // Initialize Three.js 3D Astrolabe Model
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lostTreasure3D) {
+        window.lostTreasure3D.initHeroModel('auth3DModelCanvas', 'astrolabe');
+      }
+    });
+
     document.querySelectorAll('.crest-option').forEach(crest => {
       crest.addEventListener('click', () => {
         document.querySelectorAll('.crest-option').forEach(c => c.classList.remove('selected'));
