@@ -1,0 +1,1718 @@
+/* ==========================================================================
+   LOST TREASURE: THE ISLE OF SERPENTS - ATMOSPHERIC MANUSCRIPT STYLING
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,400;1,600&family=MedievalSharp&family=Pirata+One&display=swap');
+
+:root {
+  /* Antique Nautical & Aztec Palette */
+  --bg-dark: #0a0e14;
+  --bg-cabin: #111722;
+  --parchment-base: #f4e8c1;
+  --parchment-shadow: #d7c28c;
+  --parchment-border: #8b6b3e;
+  --parchment-dark: #221c14;
+  --parchment-light: #fdf6dc;
+  
+  --ink-primary: #23190e;
+  --ink-secondary: #4a3821;
+  --ink-faint: #755b38;
+  --ink-red: #8b1e1e;
+  
+  --gold-primary: #d4af37;
+  --gold-light: #f7e07d;
+  --gold-glow: rgba(212, 175, 55, 0.4);
+  
+  --sea-cyan: #17bebb;
+  --sea-dark: #0b3c49;
+  --cursed-green: #2ecc71;
+  --cursed-glow: rgba(46, 204, 113, 0.35);
+  
+  --leather-border: #422814;
+  --brass-rim: #9e782f;
+  --wax-red: #9e2a2b;
+  
+  --font-title: 'Pirata One', 'Cinzel Decorative', cursive;
+  --font-heading: 'Cinzel', serif;
+  --font-manuscript: 'Cormorant Garamond', Georgia, serif;
+  --font-rune: 'MedievalSharp', cursive;
+  
+  --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 50% 10%, rgba(23, 190, 187, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, #06090e 0%, #101622 50%, #080d14 100%);
+  color: var(--parchment-base);
+  font-family: var(--font-manuscript);
+  font-size: 17px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Ambient Sea Vignette & Weather Layer */
+.sea-atmosphere-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.75) 100%);
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.9);
+}
+
+.ambient-fog {
+  position: fixed;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.15;
+  background: radial-gradient(circle at 50% 50%, rgba(150, 200, 220, 0.4), transparent 60%);
+  animation: driftFog 45s linear infinite alternate;
+}
+
+@keyframes driftFog {
+  0% { transform: translateX(-10%); }
+  100% { transform: translateX(10%); }
+}
+
+/* Flash effect for thunder */
+.storm-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(230, 245, 255, 0.25);
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.1s ease-out;
+}
+
+.storm-flash.active {
+  opacity: 1;
+}
+
+/* Top Captain HUD Bar */
+.captain-header-hud {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(14, 20, 30, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--brass-rim);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  padding: 10px 24px;
+}
+
+.hud-container {
+  max-width: 1350px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ship-crest-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--gold-primary);
+  background: radial-gradient(circle, #2b1f11, #130e08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.game-title-group h1 {
+  font-family: var(--font-title);
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: var(--gold-primary);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 12px var(--gold-glow);
+  line-height: 1.1;
+}
+
+.game-title-group .subtitle {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #a8b2c1;
+  text-transform: uppercase;
+}
+
+/* Status Trackers: Morale, Dread, Gold */
+.captain-stats-cluster {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(158, 120, 47, 0.35);
+  border-radius: 30px;
+  padding: 6px 18px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+}
+
+.stat-icon {
+  font-size: 16px;
+}
+
+.stat-value {
+  font-weight: 700;
+  color: var(--parchment-base);
+}
+
+.stat-item.gold .stat-value { color: var(--gold-primary); }
+.stat-item.morale .stat-value { color: #62b6cb; }
+.stat-item.dread .stat-value { color: #e63946; }
+
+/* HUD Actions */
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-btn {
+  background: linear-gradient(180deg, #2b1d11 0%, #170f07 100%);
+  color: var(--parchment-base);
+  border: 1px solid var(--brass-rim);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.hud-btn:hover {
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.hud-btn.primary-highlight {
+  background: linear-gradient(180deg, #74511d 0%, #3e2609 100%);
+  border-color: var(--gold-primary);
+  color: #fff;
+}
+
+.hud-btn .badge-pill {
+  background: var(--gold-primary);
+  color: #111;
+  font-weight: 900;
+  font-size: 10px;
+  border-radius: 10px;
+  padding: 1px 6px;
+  margin-left: 2px;
+}
+
+.audio-toggle-btn.muted {
+  opacity: 0.6;
+}
+
+/* User / Captain Badge */
+.captain-identity-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  color: var(--gold-light);
+  padding: 4px 10px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px dashed var(--gold-primary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.captain-identity-tag:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+/* ==========================================================================
+   MAIN MANUSCRIPT JOURNAL STAGE
+   ========================================================================== */
+.adventure-stage {
+  position: relative;
+  z-index: 10;
+  max-width: 1280px;
+  margin: 28px auto 40px;
+  padding: 0 20px;
+}
+
+/* The Open Tome Book Container */
+.manuscript-tome {
+  position: relative;
+  background: #1c130b;
+  border: 12px solid #321c0e;
+  border-radius: 16px;
+  box-shadow: 
+    0 18px 50px rgba(0, 0, 0, 0.9),
+    0 0 0 2px var(--brass-rim),
+    inset 0 0 30px rgba(0, 0, 0, 0.85);
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  min-height: 640px;
+  overflow: hidden;
+}
+
+/* Book Central Spine Shadow & Ribbon */
+.manuscript-tome::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 44px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, 
+    rgba(0, 0, 0, 0.35) 0%, 
+    rgba(0, 0, 0, 0.7) 35%, 
+    rgba(255, 230, 170, 0.1) 50%, 
+    rgba(0, 0, 0, 0.7) 65%, 
+    rgba(0, 0, 0, 0.35) 100%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* Bookmark Ribbon */
+.bookmark-ribbon {
+  position: absolute;
+  top: -6px;
+  left: calc(50% - 12px);
+  width: 24px;
+  height: 120px;
+  background: linear-gradient(180deg, #b01b1b, #700e0e);
+  border-left: 1px solid #ff7b7b;
+  border-right: 1px solid #4a0000;
+  box-shadow: 2px 6px 12px rgba(0, 0, 0, 0.6);
+  z-index: 25;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+  pointer-events: none;
+}
+
+/* Individual Pages */
+.manuscript-page {
+  background-color: var(--parchment-base);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(139, 107, 62, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(117, 91, 56, 0.15) 0%, transparent 45%),
+    linear-gradient(135deg, #f7ecd0 0%, #ecd8a5 50%, #e2c88d 100%);
+  color: var(--ink-primary);
+  padding: 36px 40px;
+  position: relative;
+  overflow-y: auto;
+  max-height: 800px;
+}
+
+/* Antique Aged Page Border */
+.manuscript-page::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  border: 1px solid rgba(139, 107, 62, 0.35);
+  pointer-events: none;
+  box-shadow: inset 0 0 20px rgba(139, 107, 62, 0.15);
+}
+
+/* Left Page: Illustration, Relic Spot, Ambient Scene Status */
+.left-page {
+  border-right: 2px solid rgba(100, 70, 30, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.scene-illustration-frame {
+  position: relative;
+  border: 3px solid #7c5727;
+  border-radius: 8px;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    inset 0 0 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+
+.scene-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+  filter: contrast(105%) brightness(95%) sepia(15%);
+}
+
+.scene-illustration-frame:hover .scene-image {
+  transform: scale(1.03);
+  filter: contrast(110%) brightness(100%) sepia(5%);
+}
+
+/* Corner brass embellishments */
+.frame-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--gold-primary);
+  z-index: 5;
+  pointer-events: none;
+}
+.frame-corner.top-left { top: 4px; left: 4px; border-right: none; border-bottom: none; }
+.frame-corner.top-right { top: 4px; right: 4px; border-left: none; border-bottom: none; }
+.frame-corner.bottom-left { bottom: 4px; left: 4px; border-right: none; border-top: none; }
+.frame-corner.bottom-right { bottom: 4px; right: 4px; border-left: none; border-top: none; }
+
+/* Chapter Badge Ribbon on Page */
+.page-chapter-seal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px dashed rgba(117, 91, 56, 0.4);
+  padding-bottom: 10px;
+}
+
+.chapter-number {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--ink-red);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.chapter-location {
+  font-family: var(--font-manuscript);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-secondary);
+}
+
+/* Interactive Clue Spotter in Left Page */
+.scene-discovery-strip {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(139, 107, 62, 0.35);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.discovery-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.discovery-icon-bubble {
+  width: 38px;
+  height: 38px;
+  background: #2b1f13;
+  color: var(--gold-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 1px solid var(--gold-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.discovery-text h4 {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  color: var(--ink-primary);
+}
+
+.discovery-text p {
+  font-size: 13px;
+  color: var(--ink-secondary);
+  line-height: 1.3;
+}
+
+.discovery-inspect-btn {
+  background: linear-gradient(180deg, #74511d, #422814);
+  color: #fff;
+  border: 1px solid var(--gold-primary);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.discovery-inspect-btn:hover {
+  background: var(--gold-primary);
+  color: #000;
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* Environmental Clues Lore Box */
+.manuscript-lore-quote {
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-secondary);
+  border-left: 3px solid var(--ink-red);
+  padding-left: 14px;
+  margin-top: auto;
+  line-height: 1.5;
+}
+
+.manuscript-lore-quote span.author {
+  display: block;
+  font-style: normal;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--ink-faint);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   RIGHT PAGE: NARRATIVE PROSE & DECISION FORK
+   ========================================================================== */
+.right-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.narrative-header-block {
+  margin-bottom: 4px;
+}
+
+.scene-title {
+  font-family: var(--font-title);
+  font-size: 38px;
+  letter-spacing: 1px;
+  color: #231206;
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.6);
+  line-height: 1.15;
+}
+
+.log-date-stamp {
+  font-family: var(--font-rune);
+  font-size: 14px;
+  color: var(--ink-red);
+  letter-spacing: 1px;
+}
+
+/* Parchment Narrative Text */
+.narrative-body-text {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--ink-primary);
+  text-align: justify;
+}
+
+/* Illuminated Drop Cap for First Letter */
+.narrative-body-text p:first-of-type::first-letter {
+  font-family: 'Cinzel Decorative', Georgia, serif;
+  float: left;
+  font-size: 64px;
+  line-height: 0.8;
+  padding-top: 6px;
+  padding-right: 12px;
+  padding-bottom: 2px;
+  color: var(--ink-red);
+  font-weight: 900;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.narrative-body-text p {
+  margin-bottom: 14px;
+}
+
+.narrative-body-text em {
+  color: #611818;
+  font-weight: 600;
+}
+
+/* Cipher Trigger / Puzzle Announcement Banner */
+.puzzle-challenge-card {
+  background: linear-gradient(135deg, rgba(30, 20, 10, 0.08), rgba(117, 91, 56, 0.15));
+  border: 2px solid #8b6b3e;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: inset 0 0 10px rgba(139, 107, 62, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  animation: pulseParchment 3s infinite ease-in-out;
+}
+
+@keyframes pulseParchment {
+  0%, 100% { border-color: #8b6b3e; }
+  50% { border-color: var(--gold-primary); box-shadow: 0 0 14px var(--gold-glow); }
+}
+
+.challenge-details h4 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  color: var(--ink-red);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.challenge-details p {
+  font-size: 14px;
+  color: var(--ink-secondary);
+  margin-top: 4px;
+}
+
+.open-puzzle-btn {
+  background: linear-gradient(180deg, #9e2a2b, #590d0e);
+  color: #fff;
+  border: 1px solid #ff8f8f;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: var(--transition-smooth);
+}
+
+.open-puzzle-btn:hover {
+  background: linear-gradient(180deg, #b83234, #731214);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(158, 42, 43, 0.5);
+}
+
+/* Moral Captain Decision Fork */
+.decision-fork-section {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.decision-section-label {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.decision-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(117, 91, 56, 0.4);
+}
+
+.choice-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choice-option-btn {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid #8b6b3e;
+  border-radius: 8px;
+  padding: 14px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.choice-option-btn::before {
+  content: '⚓';
+  position: absolute;
+  right: -10px;
+  bottom: -15px;
+  font-size: 48px;
+  opacity: 0.06;
+  pointer-events: none;
+  transform: rotate(-15deg);
+}
+
+.choice-option-btn:hover {
+  background: #fffdf5;
+  border-color: #533316;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(139, 107, 62, 0.25);
+}
+
+.choice-option-btn:active {
+  transform: translateY(0);
+}
+
+.choice-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.choice-description {
+  font-family: var(--font-manuscript);
+  font-size: 15px;
+  color: var(--ink-secondary);
+  line-height: 1.4;
+}
+
+/* Moral Consequence Predictor Tag */
+.consequence-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 2px;
+  width: fit-content;
+}
+
+.consequence-tag.crew { background: rgba(98, 182, 203, 0.2); color: #0f4c5c; }
+.consequence-tag.glory { background: rgba(212, 175, 55, 0.25); color: #5a4305; }
+.consequence-tag.dread { background: rgba(230, 57, 70, 0.2); color: #780000; }
+.consequence-tag.puzzle-lock { background: rgba(100, 100, 100, 0.15); color: #333; }
+
+.choice-option-btn.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  border-style: dashed;
+  background: rgba(200, 190, 175, 0.3);
+}
+
+.choice-option-btn.locked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Page Turn Footer Navigation */
+.page-navigation-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(117, 91, 56, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-num-indicator {
+  font-family: var(--font-rune);
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.history-back-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition-smooth);
+}
+
+.history-back-btn:hover {
+  color: var(--ink-red);
+}
+
+/* ==========================================================================
+   MODAL WINDOWS & INTERACTIVE PUZZLE STYLES
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(6, 10, 16, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.parchment-modal-box {
+  background-color: var(--parchment-base);
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(215, 194, 140, 0.2), transparent 70%),
+    linear-gradient(135deg, #fbf2db 0%, #ecd7a0 100%);
+  border: 4px solid #5d3f1a;
+  border-radius: 14px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.9),
+    0 0 0 2px var(--brass-rim);
+  max-width: 820px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  color: var(--ink-primary);
+  padding: 30px;
+  transform: scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-backdrop.active .parchment-modal-box {
+  transform: scale(1);
+}
+
+.modal-close-wax-seal {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  background: radial-gradient(circle, #b82626, #6b0c0c);
+  color: #fff;
+  border-radius: 50%;
+  border: 2px solid #ff9e9e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.modal-close-wax-seal:hover {
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 0 12px rgba(255, 50, 50, 0.6);
+}
+
+.modal-title-header {
+  border-bottom: 2px solid #8b6b3e;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-title-header h2 {
+  font-family: var(--font-title);
+  font-size: 32px;
+  color: #3b220e;
+  letter-spacing: 1px;
+}
+
+.modal-title-header p {
+  font-family: var(--font-manuscript);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-secondary);
+}
+
+/* ==========================================================================
+   PUZZLE 1: CAESAR SHIFT CIPHER WHEEL
+   ========================================================================== */
+.cipher-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.cipher-interactive-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.wheel-dial-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #3e2814 0%, #160e06 100%);
+  border: 6px solid #b8860b;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.6),
+    inset 0 0 20px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.cipher-outer-ring,
+.cipher-inner-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.cipher-inner-ring {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #2b1a09, #0d0803);
+  border: 3px solid #d4af37;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.wheel-center-boss {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e6c875, #855f13);
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  z-index: 10;
+}
+
+.cipher-letter {
+  position: absolute;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-align: center;
+  width: 20px;
+  height: 20px;
+  font-size: 13px;
+  transform-origin: center;
+}
+
+.outer-letter {
+  color: var(--gold-light);
+}
+
+.inner-letter {
+  color: #ffaa5e;
+}
+
+/* Cipher Controls & Output Panel */
+.cipher-controls-panel {
+  flex: 1;
+  min-width: 280px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #8b6b3e;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cipher-shift-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shift-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-heading);
+  font-size: 14px;
+}
+
+.shift-range-input {
+  width: 100%;
+  accent-color: var(--gold-primary);
+  cursor: pointer;
+}
+
+.cipher-text-display-box {
+  background: #201509;
+  border: 2px solid #5a3f1d;
+  border-radius: 6px;
+  padding: 12px;
+  color: #fff;
+  font-family: monospace;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.cipher-text-display-box .label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--gold-primary);
+  margin-bottom: 4px;
+}
+
+.cipher-text-display-box .encoded-msg {
+  color: #e56b6f;
+  margin-bottom: 8px;
+}
+
+.cipher-text-display-box .decoded-preview {
+  color: #52b788;
+  font-weight: 700;
+  min-height: 22px;
+}
+
+.verify-puzzle-btn {
+  background: linear-gradient(180deg, #2b6e4e, #163d2b);
+  color: #fff;
+  border: 1px solid #52b788;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.verify-puzzle-btn:hover {
+  background: linear-gradient(180deg, #388d64, #1b4934);
+  box-shadow: 0 0 14px rgba(82, 183, 136, 0.5);
+}
+
+/* ==========================================================================
+   PUZZLE 2: NAUTICAL SEMAPHORE / SIGNAL FLAGS
+   ========================================================================== */
+.nautical-signals-board {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.signal-mast-rigging {
+  background: radial-gradient(ellipse at bottom, #2b1f14 0%, #110c07 100%);
+  border: 3px solid #8b6b3e;
+  border-radius: 10px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+.mast-halyard-slots {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.flag-slot {
+  width: 68px;
+  height: 68px;
+  border: 2px dashed #d4af37;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.flag-slot.filled {
+  border-style: solid;
+  border-color: #52b788;
+  background: rgba(82, 183, 136, 0.1);
+}
+
+.flag-slot .slot-hint-letter {
+  position: absolute;
+  top: -12px;
+  background: #3e2609;
+  color: var(--gold-primary);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--gold-primary);
+}
+
+.signal-flag-svg {
+  width: 52px;
+  height: 52px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+
+.maritime-flag-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.45);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #8b6b3e;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.flag-pick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid #c9b085;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.flag-pick-card:hover {
+  transform: translateY(-2px);
+  border-color: #533316;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.flag-pick-card span {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* ==========================================================================
+   PUZZLE 3: AZTEC ASTROLOGICAL CELESTIAL DIAL
+   ========================================================================== */
+.aztec-dial-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.celestial-wheel-canvas-box {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #24190c 0%, #0c0804 100%);
+  border: 6px solid #b8860b;
+  border-radius: 50%;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.8),
+    0 0 25px var(--gold-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aztec-ring-outer,
+.aztec-ring-mid,
+.aztec-ring-inner {
+  position: absolute;
+  border-radius: 50%;
+  transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.aztec-ring-outer {
+  width: 290px;
+  height: 290px;
+  border: 3px dashed #d4af37;
+}
+
+.aztec-ring-mid {
+  width: 200px;
+  height: 200px;
+  border: 3px solid #17bebb;
+  box-shadow: 0 0 10px rgba(23, 190, 187, 0.3);
+}
+
+.aztec-ring-inner {
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle, #7a1d1d, #2b0808);
+  border: 3px solid #ffaa5e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+.ring-glyph-node {
+  position: absolute;
+  font-size: 18px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-light);
+}
+
+.aztec-dial-controls {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dial-step-btn {
+  background: linear-gradient(180deg, #422814, #211308);
+  color: var(--gold-light);
+  border: 1px solid var(--brass-rim);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.dial-step-btn:hover {
+  background: var(--gold-primary);
+  color: #111;
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* ==========================================================================
+   INVENTORY POUCH & COMBINATION WORKBENCH
+   ========================================================================== */
+.inventory-pouch-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  background: rgba(43, 31, 19, 0.08);
+  border: 2px solid #8b6b3e;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.inventory-slot {
+  aspect-ratio: 1;
+  background: radial-gradient(circle, #3e2814 0%, #1d1208 100%);
+  border: 2px solid #8b6b3e;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.inventory-slot:hover {
+  border-color: var(--gold-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 0 14px var(--gold-glow);
+}
+
+.inventory-slot.selected {
+  border-color: #52b788;
+  box-shadow: 0 0 16px rgba(82, 183, 136, 0.6);
+  background: radial-gradient(circle, #284435 0%, #102118 100%);
+}
+
+.inventory-slot.empty {
+  opacity: 0.35;
+  cursor: default;
+}
+.inventory-slot.empty:hover {
+  border-color: #8b6b3e;
+  transform: none;
+  box-shadow: none;
+}
+
+.inventory-item-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+}
+
+.inventory-item-name {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  color: var(--gold-light);
+  text-align: center;
+  padding: 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+}
+
+/* Combination Workbench Area */
+.combination-workbench {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #8b6b3e;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.workbench-slots-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.combine-target-slot {
+  width: 80px;
+  height: 80px;
+  background: #2b1a0e;
+  border: 2px dashed #b8860b;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-light);
+  font-size: 12px;
+  font-family: var(--font-heading);
+  text-align: center;
+  padding: 6px;
+}
+
+.combine-plus-sign {
+  font-size: 24px;
+  color: var(--ink-red);
+  font-weight: 900;
+}
+
+.combine-action-btn {
+  background: linear-gradient(180deg, #d4af37, #937119);
+  color: #111;
+  border: 1px solid #fff;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  align-self: center;
+  transition: var(--transition-smooth);
+}
+
+.combine-action-btn:hover {
+  background: linear-gradient(180deg, #f7e07d, #b8860b);
+  box-shadow: 0 0 16px var(--gold-glow);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   AUTHENTICATION & CAPTAIN ARTICLES MODAL
+   ========================================================================== */
+.auth-parchment-sheet {
+  max-width: 520px;
+}
+
+.auth-tabs-row {
+  display: flex;
+  border-bottom: 2px solid #8b6b3e;
+  margin-bottom: 20px;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.auth-tab-btn.active {
+  color: var(--ink-red);
+  border-bottom: 3px solid var(--ink-red);
+  font-weight: 700;
+}
+
+.auth-form-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-input-group label {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.auth-parchment-input {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px solid #8b6b3e;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: var(--font-manuscript);
+  font-size: 17px;
+  color: var(--ink-primary);
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.auth-parchment-input:focus {
+  border-color: #3b220e;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(139, 107, 62, 0.4);
+}
+
+.crest-picker-grid {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.crest-option {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #8b6b3e;
+  background: #2b1f13;
+  color: var(--gold-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.crest-option.selected {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 12px var(--gold-glow);
+  background: #4a331c;
+}
+
+.auth-submit-btn {
+  background: linear-gradient(180deg, #9e2a2b, #5f1112);
+  color: #fff;
+  border: 1px solid #ff7b7b;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: var(--transition-smooth);
+  margin-top: 8px;
+}
+
+.auth-submit-btn:hover {
+  background: linear-gradient(180deg, #b83234, #7a1516);
+  box-shadow: 0 0 14px rgba(158, 42, 43, 0.6);
+  transform: translateY(-2px);
+}
+
+.guest-quick-play {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.guest-btn-link {
+  background: none;
+  border: none;
+  color: var(--ink-secondary);
+  font-family: var(--font-manuscript);
+  font-style: italic;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.guest-btn-link:hover {
+  color: var(--ink-red);
+}
+
+/* ==========================================================================
+   HINTS SYSTEM MODAL (3-TIER PROGRESSIVE)
+   ========================================================================== */
+.hints-tiers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hint-tier-card {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid #8b6b3e;
+  border-radius: 8px;
+  padding: 16px;
+  transition: var(--transition-smooth);
+}
+
+.hint-tier-card.unlocked {
+  background: #fffdf5;
+  border-color: #52b788;
+}
+
+.hint-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.hint-badge {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.hint-badge.tier1 { background: #3a86ff; }
+.hint-badge.tier2 { background: #f77f00; }
+.hint-badge.tier3 { background: #d62828; }
+
+.unlock-hint-btn {
+  background: linear-gradient(180deg, #533316, #2d1908);
+  color: var(--gold-light);
+  border: 1px solid var(--gold-primary);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.unlock-hint-btn:hover {
+  background: var(--gold-primary);
+  color: #111;
+}
+
+.hint-content-text {
+  font-size: 15px;
+  color: var(--ink-primary);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   ACHIEVEMENT BADGES & ENDINGS MODAL
+   ========================================================================== */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.badge-card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1.5px solid #8b6b3e;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  transition: var(--transition-smooth);
+}
+
+.badge-card.locked {
+  opacity: 0.45;
+  filter: grayscale(100%);
+}
+
+.badge-card.unlocked {
+  border-color: var(--gold-primary);
+  background: #fffdf5;
+  box-shadow: 0 0 14px var(--gold-glow);
+}
+
+.badge-icon-stamp {
+  font-size: 32px;
+}
+
+.badge-name {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.badge-desc {
+  font-size: 12px;
+  color: var(--ink-secondary);
+  line-height: 1.3;
+}
+
+.endings-archive-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ending-archive-item {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid #8b6b3e;
+  border-radius: 6px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ending-archive-item.unlocked {
+  border-left: 4px solid var(--gold-primary);
+  background: #fff;
+}
+
+/* ==========================================================================
+   ANIMATIONS & RESPONSIVE TWEAKS
+   ========================================================================== */
+@keyframes coinJingle {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-10deg) scale(1.15); }
+  50% { transform: rotate(10deg) scale(1.15); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.animate-coin {
+  animation: coinJingle 0.6s ease;
+}
+
+/* Toast Notifications */
+.voyage-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #2b1f13;
+  color: var(--gold-light);
+  border: 2px solid var(--gold-primary);
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 14px var(--gold-glow);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.4s ease;
+}
+
+.voyage-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Mobile & Tablet Responsiveness */
+@media (max-width: 980px) {
+  .manuscript-tome {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .manuscript-tome::before,
+  .bookmark-ribbon {
+    display: none;
+  }
+  .left-page {
+    border-right: none;
+    border-bottom: 3px solid #8b6b3e;
+  }
+  .hud-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .captain-stats-cluster {
+    justify-content: space-around;
+  }
+}
