@@ -1,7 +1,7 @@
 /**
  * LOST TREASURE: CORE APPLICATION CONTROLLER
  * Coordinates UI rendering, narrative state, interactive modals,
- * inventory management, puzzles, and checkpoint persistence.
+ * inventory management, puzzles, and MySQL database persistence.
  */
 
 class LostTreasureApp {
@@ -49,7 +49,6 @@ class LostTreasureApp {
     this.elPageNumIndicator = document.getElementById('pageNumIndicator');
 
     // Modals
-    this.modalAuth = document.getElementById('authModal');
     this.modalPuzzle = document.getElementById('puzzleModal');
     this.modalInventory = document.getElementById('inventoryModal');
     this.modalHints = document.getElementById('hintsModal');
@@ -86,7 +85,6 @@ class LostTreasureApp {
     document.getElementById('btnOpenBadges').addEventListener('click', () => this.openBadgesModal());
     document.getElementById('btnQuicksave').addEventListener('click', () => this.quicksaveVoyage());
     document.getElementById('btnNewVoyage').addEventListener('click', () => this.confirmRestartVoyage());
-    document.getElementById('captainBadgeBtn').addEventListener('click', () => this.openAuthModal());
 
     // Discovery strip collect/inspect button
     if (this.elInspectBtn) {
@@ -104,69 +102,6 @@ class LostTreasureApp {
       });
     }
 
-    // Auth tabs
-    document.querySelectorAll('.auth-tab-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        const tab = e.target.getAttribute('data-tab');
-        document.getElementById('authRegisterForm').style.display = tab === 'register' ? 'flex' : 'none';
-        document.getElementById('authLoginForm').style.display = tab === 'login' ? 'flex' : 'none';
-      });
-    });
-
-    // Crest selector in register form
-    document.querySelectorAll('.crest-option').forEach(crest => {
-      crest.addEventListener('click', (e) => {
-        document.querySelectorAll('.crest-option').forEach(c => c.classList.remove('selected'));
-        crest.classList.add('selected');
-        document.getElementById('regCrestInput').value = crest.getAttribute('data-crest');
-      });
-    });
-
-    // Register Form Submit
-    document.getElementById('authRegisterForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('regCaptainName').value;
-      const pass = document.getElementById('regSecretMark').value;
-      const title = document.getElementById('regTitleSelect').value;
-      const crest = document.getElementById('regCrestInput').value || '☠️';
-
-      const res = window.captainAuth.register(name, pass, title, crest);
-      if (res.success) {
-        this.showToast(`Welcome aboard, Captain ${res.captain.name}!`);
-        this.closeAllModals();
-        this.updateHUD();
-      } else {
-        alert(res.message);
-      }
-    });
-
-    // Login Form Submit
-    document.getElementById('authLoginForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('loginCaptainName').value;
-      const pass = document.getElementById('loginSecretMark').value;
-
-      const res = window.captainAuth.login(name, pass);
-      if (res.success) {
-        this.showToast(`Captain ${res.captain.name} returned to the helm!`);
-        this.closeAllModals();
-        this.resumeSavedVoyage();
-        this.updateHUD();
-      } else {
-        alert(res.message);
-      }
-    });
-
-    // Play as Guest
-    document.getElementById('btnPlayAsGuest').addEventListener('click', () => {
-      const guest = window.captainAuth.playAsGuest();
-      this.showToast(`Sailing as ${guest.name}!`);
-      this.closeAllModals();
-      this.updateHUD();
-    });
-
     // Workbench combine action
     document.getElementById('btnWorkbenchCombine').addEventListener('click', () => {
       const res = window.inventorySystem.attemptCombination();
@@ -175,46 +110,44 @@ class LostTreasureApp {
         this.renderInventoryGrid();
         this.renderWorkbenchSlots();
         this.updateHUD();
-        // Check if current narrative node has condition updates
         this.renderRightPage(window.storyEngine.getNode(this.state.currentNodeId));
+        this.quicksaveVoyage();
       } else {
         alert(res.message);
       }
     });
   }
 
-  initApp() {
-    // Check if user is logged in
-    if (!window.captainAuth.isLoggedIn()) {
-      this.openAuthModal();
-    } else {
-      this.resumeSavedVoyage();
+  async initApp() {
+    // Load persisted state from MySQL database
+    if (window.captainAuth) {
+      const saved = await window.captainAuth.loadFromDatabase();
+      if (saved) {
+        this.state = {
+          currentNodeId: saved.currentNodeId || 'act1_start',
+          morale: saved.morale !== undefined ? saved.morale : 65,
+          dread: saved.dread !== undefined ? saved.dread : 15,
+          gold: saved.gold !== undefined ? saved.gold : 25,
+          history: saved.history || ['act1_start'],
+          solvedPuzzles: saved.solvedPuzzles || []
+        };
+        if (saved.inventory) {
+          window.inventorySystem.loadState(saved.inventory);
+        }
+        if (saved.endingReached && window.storyEngine.endings[saved.endingReached]) {
+          this.activeEnding = window.storyEngine.endings[saved.endingReached];
+        }
+        this.showToast("Resumed voyage from Captain's Log in database!");
+      } else {
+        window.inventorySystem.reset();
+      }
     }
+
     this.renderCurrentNode();
     this.updateHUD();
   }
 
-  resumeSavedVoyage() {
-    const saved = window.captainAuth.loadActiveVoyage();
-    if (saved) {
-      this.state = {
-        currentNodeId: saved.currentNodeId || 'act1_start',
-        morale: saved.morale !== undefined ? saved.morale : 65,
-        dread: saved.dread !== undefined ? saved.dread : 15,
-        gold: saved.gold !== undefined ? saved.gold : 25,
-        history: saved.history || ['act1_start'],
-        solvedPuzzles: saved.solvedPuzzles || []
-      };
-      if (saved.inventory) {
-        window.inventorySystem.loadState(saved.inventory);
-      }
-      this.showToast("Resumed voyage from ship's log!");
-    } else {
-      window.inventorySystem.reset();
-    }
-  }
-
-  quicksaveVoyage() {
+  async quicksaveVoyage() {
     const voyageState = {
       currentNodeId: this.state.currentNodeId,
       morale: this.state.morale,
@@ -222,15 +155,18 @@ class LostTreasureApp {
       gold: this.state.gold,
       history: this.state.history,
       solvedPuzzles: this.state.solvedPuzzles,
-      inventory: window.inventorySystem.items
+      inventory: window.inventorySystem.items,
+      endingReached: this.activeEnding ? this.activeEnding.id : null
     };
 
-    window.captainAuth.saveActiveVoyage(voyageState);
+    if (window.captainAuth) {
+      await window.captainAuth.saveActiveVoyage(voyageState);
+    }
     if (window.seaAudio) window.seaAudio.playCoinClink();
-    this.showToast("Voyage checkpoint saved to Captain's Logbook!");
+    this.showToast("Voyage checkpoint recorded in MySQL database!");
   }
 
-  confirmRestartVoyage() {
+  async confirmRestartVoyage() {
     if (confirm("Are you sure you wish to abandon this voyage and begin anew from Act I?")) {
       this.state = {
         currentNodeId: 'act1_start',
@@ -242,7 +178,7 @@ class LostTreasureApp {
       };
       this.activeEnding = null;
       window.inventorySystem.reset();
-      this.quicksaveVoyage();
+      await this.quicksaveVoyage();
       if (window.captainAuth) window.captainAuth.unlockAchievement('voyager_reborn');
       this.renderCurrentNode();
       this.updateHUD();
@@ -251,9 +187,18 @@ class LostTreasureApp {
   }
 
   updateHUD() {
-    const captain = window.captainAuth.getCurrentCaptain() || { name: 'Nameless Mariner', crest: '☠️', title: 'Buccaneer' };
-    this.elCaptainName.textContent = captain.name;
-    this.elCaptainCrest.textContent = captain.crest;
+    const captain = (window.captainAuth && window.captainAuth.getCurrentCaptain()) || { 
+      name: 'The Nameless Mariner', 
+      crest: '☠️', 
+      title: 'Buccaneer' 
+    };
+
+    if (this.elCaptainName && captain.name) {
+      this.elCaptainName.textContent = captain.name;
+    }
+    if (this.elCaptainCrest && captain.crest) {
+      this.elCaptainCrest.textContent = captain.crest;
+    }
 
     this.elMoraleVal.textContent = `${this.state.morale}%`;
     this.elDreadVal.textContent = `${this.state.dread}%`;
@@ -389,14 +334,14 @@ class LostTreasureApp {
       this.showToast(choice.toast);
     }
 
-    if (choice.badge) {
+    if (choice.badge && window.captainAuth) {
       window.captainAuth.unlockAchievement(choice.badge);
     }
 
     // Check ending trigger
     if (choice.endingId) {
       this.activeEnding = window.storyEngine.endings[choice.endingId];
-      if (choice.endingId === 'ending_pirate_king' && this.state.morale >= 80) {
+      if (choice.endingId === 'ending_pirate_king' && this.state.morale >= 80 && window.captainAuth) {
         window.captainAuth.unlockAchievement('compassionate_captain');
       }
       this.renderCurrentNode();
@@ -609,8 +554,8 @@ class LostTreasureApp {
     this.closeAllModals();
     this.modalBadges.classList.add('active');
 
-    const captain = window.captainAuth.getCurrentCaptain();
-    const unlockedBadges = captain && captain.achievements ? captain.achievements : [];
+    const unlockedBadges = (window.captainAuth && window.captainAuth.getAchievements()) || [];
+    const unlockedEndings = (window.captainAuth && window.captainAuth.getEndings()) || [];
 
     const badgesContainer = document.getElementById('badgesGridContainer');
     badgesContainer.innerHTML = '';
@@ -634,24 +579,19 @@ class LostTreasureApp {
     endingsContainer.innerHTML = '';
 
     Object.values(window.storyEngine.endings).forEach(ending => {
+      const isReached = unlockedEndings.includes(ending.id);
       const item = document.createElement('div');
-      item.className = 'ending-archive-item';
+      item.className = `ending-archive-item ${isReached ? 'unlocked' : ''}`;
       item.innerHTML = `
         <div>
-          <strong style="font-family: var(--font-heading); color: var(--ink-primary);">${ending.title}</strong>
+          <strong style="font-family: var(--font-heading); color: var(--ink-primary);">
+            ${ending.title} ${isReached ? '⭐ [DISCOVERED]' : ''}
+          </strong>
           <p style="font-size: 13px; color: var(--ink-secondary); margin-top: 2px;">${ending.summary}</p>
         </div>
       `;
       endingsContainer.appendChild(item);
     });
-  }
-
-  // =========================================================================
-  // AUTH MODAL
-  // =========================================================================
-  openAuthModal() {
-    this.closeAllModals();
-    this.modalAuth.classList.add('active');
   }
 
   closeAllModals() {
