@@ -1715,4 +1715,70 @@ body {
   .captain-stats-cluster {
     justify-content: space-around;
   }
+/* Standalone Auth Pages (login.php & register.php) */
+.auth-page-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 30px 16px;
+  background-color: var(--bg-dark);
+}
+
+.auth-standalone-wrapper {
+  width: 100%;
+  max-width: 520px;
+  position: relative;
+  z-index: 10;
+  margin: auto;
+}
+
+.auth-brand-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.auth-standalone-card {
+  margin: 0 auto;
+  transform: none !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.9), 0 0 0 2px var(--brass-rim);
+}
+
+.auth-alert-banner {
+  background: rgba(184, 38, 38, 0.15);
+  border: 1.5px solid var(--wax-red);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  color: #ff8585;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-page-footer-links {
+  text-align: center;
+  margin-top: 18px;
+  border-top: 1px dashed rgba(139, 107, 62, 0.4);
+  padding-top: 14px;
+  font-size: 14px;
+}
+
+.auth-page-footer-links a {
+  color: var(--ink-red);
+  font-weight: 700;
+  text-decoration: underline;
+  transition: var(--transition-smooth);
+}
+
+.auth-page-footer-links a:hover {
+  color: #4a1212;
+}
+
+.auth-page-footer-links .guest-link {
+  color: var(--ink-secondary);
+  font-style: italic;
+  font-size: 13px;
 }
